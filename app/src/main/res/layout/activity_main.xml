@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="#FAFAFA">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layoutDirection="rtl">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="معبئ نموذج GPS للمركبات السياحية"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:paddingBottom="12dp" />
+
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="الحالة: جاهز"
+            android:textSize="15sp"
+            android:paddingBottom="12dp" />
+
+        <EditText
+            android:id="@+id/start"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="بداية الرحلة - مثال: الغردقة"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/destination"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="الوجهة - مثال: القاهرة"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/operatorCompany"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="اسم الشركة المنفذة؟" />
+
+        <EditText
+            android:id="@+id/operatorLicense"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="رقم ترخيص الشركة المنفذة"
+            android:inputType="number" />
+
+        <EditText
+            android:id="@+id/carrierCompany"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="اسم الشركة الناقلة؟" />
+
+        <EditText
+            android:id="@+id/carrierLicense"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="رقم ترخيص الشركة الناقلة"
+            android:inputType="number" />
+
+        <EditText
+            android:id="@+id/vehicleType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="نوع المركبة - مثال: اتوبيس سياحي" />
+
+        <EditText
+            android:id="@+id/tourists"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="عدد السائحين"
+            android:inputType="number" />
+
+        <EditText
+            android:id="@+id/plateNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="رقم اللوحة - أرقام فقط"
+            android:inputType="number" />
+
+        <EditText
+            android:id="@+id/plateLetters"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="حروف اللوحة - مثال: أ ب ج"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/chassis"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="رقم الشاسية"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/whatsapp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="رقم واتساب مقدم الطلب"
+            android:inputType="phone" />
+
+        <EditText
+            android:id="@+id/applicantRole"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="صفة مقدم الطلب - مثال: مدير نقل" />
+
+        <EditText
+            android:id="@+id/nationalities"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="الجنسيات - افصل بينها بفاصلة، مثال: ألمانيا، فرنسا"
+            android:inputType="text" />
+
+        <Button
+            android:id="@+id/accessibilityButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="فتح إعدادات إمكانية الوصول" />
+
+        <Button
+            android:id="@+id/startButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="بدء التعبئة والإرسال"
+            android:layout_marginTop="8dp" />
+
+        <Button
+            android:id="@+id/stopButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="إيقاف التنفيذ"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ملاحظة: هذه النسخة تعتمد على Accessibility وتتعامل مع عناصر Google Forms الظاهرة. راجع البيانات قبل الضغط على بدء التعبئة."
+            android:textSize="13sp"
+            android:paddingTop="14dp" />
+    </LinearLayout>
+</ScrollView>
