@@ -1,6 +1,7 @@
 name: Extract Android Project
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - "*.zip"
