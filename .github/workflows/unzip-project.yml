@@ -1,0 +1,49 @@
+name: Extract Android Project
+
+on:
+  push:
+    paths:
+      - "*.zip"
+
+permissions:
+  contents: write
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract project ZIP
+        run: |
+          rm -rf /tmp/project
+          mkdir -p /tmp/project
+
+          unzip -q GPS_Form_Automator_v1.zip -d /tmp/project
+
+          ROOT_DIR=$(find /tmp/project -mindepth 1 -maxdepth 1 -type d | head -n 1)
+
+          if [ -n "$ROOT_DIR" ]; then
+            cp -a "$ROOT_DIR"/. .
+          else
+            cp -a /tmp/project/. .
+          fi
+
+          rm -f GPS_Form_Automator_v1.zip
+
+      - name: Commit extracted project
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git commit -m "Extract Android project"
+          git push
