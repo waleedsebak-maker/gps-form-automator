@@ -1,0 +1,278 @@
+name: Run GPS AI Agent
+
+on:
+  workflow_dispatch:
+    inputs:
+      start:
+        description: "بداية الرحلة"
+        required: true
+        default: "الغردقة"
+      destination:
+        description: "الوجهة"
+        required: true
+        default: "القاهرة"
+      operator_company:
+        description: "الشركة المنفذة"
+        required: true
+        default: "ان ليميتيد"
+      operator_license:
+        description: "ترخيص الشركة المنفذة"
+        required: true
+        default: "2257"
+      carrier_company:
+        description: "الشركة الناقلة"
+        required: true
+        default: "ان ليميتيد"
+      carrier_license:
+        description: "ترخيص الشركة الناقلة"
+        required: true
+        default: "2257"
+      vehicle_type:
+        description: "نوع المركبة"
+        required: true
+        default: "أتوبيس سياحي"
+      tourists:
+        description: "عدد السائحين"
+        required: true
+        default: "33"
+      plate:
+        description: "رقم اللوحة"
+        required: true
+      nationality:
+        description: "الجنسية"
+        required: true
+        default: "صيني"
+      chassis:
+        description: "رقم الشاسية"
+        required: true
+      whatsapp:
+        description: "رقم واتساب مقدم الطلب"
+        required: true
+      applicant_role:
+        description: "صفة مقدم الطلب"
+        required: true
+        default: "مدير نقل"
+
+jobs:
+  run-agent:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: |
+          npm init -y
+          npm install openai playwright
+          npx playwright install --with-deps chromium
+
+      - name: Run browser agent
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          START: ${{ inputs.start }}
+          DESTINATION: ${{ inputs.destination }}
+          OPERATOR_COMPANY: ${{ inputs.operator_company }}
+          OPERATOR_LICENSE: ${{ inputs.operator_license }}
+          CARRIER_COMPANY: ${{ inputs.carrier_company }}
+          CARRIER_LICENSE: ${{ inputs.carrier_license }}
+          VEHICLE_TYPE: ${{ inputs.vehicle_type }}
+          TOURISTS: ${{ inputs.tourists }}
+          PLATE: ${{ inputs.plate }}
+          NATIONALITY: ${{ inputs.nationality }}
+          CHASSIS: ${{ inputs.chassis }}
+          WHATSAPP: ${{ inputs.whatsapp }}
+          APPLICANT_ROLE: ${{ inputs.applicant_role }}
+        run: |
+          cat > agent.mjs <<'EOF'
+          import OpenAI from "openai";
+          import { chromium } from "playwright";
+
+          const openai = new OpenAI({
+            apiKey: process.env.OPENAI_API_KEY
+          });
+
+          const FORM_URL =
+            "https://docs.google.com/forms/d/e/1FAIpQLScSHU-SGwRzD06BtRkS-WxwS-G6JWrm37CrU2WYC__sAncfKA/viewform";
+
+          const data = {
+            start: process.env.START,
+            destination: process.env.DESTINATION,
+            operatorCompany: process.env.OPERATOR_COMPANY,
+            operatorLicense: process.env.OPERATOR_LICENSE,
+            carrierCompany: process.env.CARRIER_COMPANY,
+            carrierLicense: process.env.CARRIER_LICENSE,
+            vehicleType: process.env.VEHICLE_TYPE,
+            tourists: process.env.TOURISTS,
+            plate: process.env.PLATE,
+            nationality: process.env.NATIONALITY,
+            chassis: process.env.CHASSIS,
+            whatsapp: process.env.WHATSAPP,
+            applicantRole: process.env.APPLICANT_ROLE
+          };
+
+          async function main() {
+            if (!process.env.OPENAI_API_KEY) {
+              throw new Error("OPENAI_API_KEY غير موجود في GitHub Secrets");
+            }
+
+            const browser = await chromium.launch({
+              headless: true
+            });
+
+            const page = await browser.newPage({
+              viewport: {
+                width: 1440,
+                height: 1000
+              },
+              locale: "ar-EG"
+            });
+
+            await page.goto(FORM_URL, {
+              waitUntil: "domcontentloaded",
+              timeout: 60000
+            });
+
+            await page.waitForTimeout(2000);
+
+            const screenshot = async () => {
+              const buffer = await page.screenshot({
+                type: "png"
+              });
+
+              return "data:image/png;base64," +
+                buffer.toString("base64");
+            };
+
+            let response = await openai.responses.create({
+              model: "gpt-5.6-sol",
+              tools: [{
+                type: "computer_use_preview",
+                environment: "browser",
+                display_width: 1440,
+                display_height: 1000
+              }],
+              input: [{
+                role: "user",
+                content: [{
+                  type: "input_text",
+                  text:
+                    "املأ نموذج Google Forms الحالي بالبيانات التالية ثم أرسله. " +
+                    "لا تغيّر أي قيمة ولا تخترع بيانات. " +
+                    "راجع جميع الحقول قبل الضغط على إرسال. " +
+                    "إذا ظهر CAPTCHA أو تسجيل دخول أو تحدي أمني فتوقف ولا تحاول تجاوزه.\\n\\n" +
+                    JSON.stringify(data, null, 2)
+                }]
+              }]
+            });
+
+            for (let i = 0; i < 40; i++) {
+              const calls =
+                response.output?.filter(
+                  item => item.type === "computer_call"
+                ) || [];
+
+              if (calls.length === 0) {
+                console.log(response.output_text || "Agent finished.");
+                break;
+              }
+
+              const outputs = [];
+
+              for (const call of calls) {
+                const action = call.action;
+
+                switch (action.type) {
+                  case "click":
+                    await page.mouse.click(action.x, action.y);
+                    break;
+
+                  case "double_click":
+                    await page.mouse.dblclick(action.x, action.y);
+                    break;
+
+                  case "type":
+                    await page.keyboard.type(action.text || "");
+                    break;
+
+                  case "keypress":
+                  case "key_press":
+                    for (const key of action.keys || []) {
+                      await page.keyboard.press(key);
+                    }
+                    break;
+
+                  case "scroll":
+                    await page.mouse.wheel(
+                      action.scroll_x || 0,
+                      action.scroll_y || 0
+                    );
+                    break;
+
+                  case "wait":
+                    await page.waitForTimeout(1500);
+                    break;
+
+                  case "screenshot":
+                    break;
+
+                  default:
+                    console.log(
+                      "Unsupported action:",
+                      action.type
+                    );
+                }
+
+                await page.waitForTimeout(500);
+
+                outputs.push({
+                  type: "computer_call_output",
+                  call_id: call.call_id,
+                  output: {
+                    type: "computer_screenshot",
+                    image_url: await screenshot()
+                  }
+                });
+              }
+
+              response = await openai.responses.create({
+                model: "gpt-5.6-sol",
+                tools: [{
+                  type: "computer_use_preview",
+                  environment: "browser",
+                  display_width: 1440,
+                  display_height: 1000
+                }],
+                previous_response_id: response.id,
+                input: outputs
+              });
+            }
+
+            await page.screenshot({
+              path: "agent-final.png",
+              fullPage: true
+            });
+
+            await browser.close();
+          }
+
+          main().catch(error => {
+            console.error(error);
+            process.exit(1);
+          });
+          EOF
+
+          node agent.mjs
+
+      - name: Save final screenshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gps-agent-result
+          path: agent-final.png
+          if-no-files-found: ignore
