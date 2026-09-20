@@ -24,7 +24,7 @@
             android:id="@+id/tvStatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="الحالة: جاهز"
+            android:text="الحالة: جاري الفحص..."
             android:textSize="15sp"
             android:paddingBottom="12dp" />
 
@@ -72,7 +72,7 @@
             android:id="@+id/vehicleType"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="نوع المركبة - مثال: اتوبيس سياحي" />
+            android:hint="نوع المركبة - مثال: أتوبيس سياحي" />
 
         <EditText
             android:id="@+id/tourists"
@@ -92,21 +92,21 @@
             android:id="@+id/plateLetters"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="حروف اللوحة - مثال: أ ب ج"
+            android:hint="حروف اللوحة - مثال: ي ن ج"
             android:inputType="text" />
 
         <EditText
             android:id="@+id/chassis"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="رقم الشاسية"
+            android:hint="رقم الشاسية - حروف وأرقام إنجليزية"
             android:inputType="text" />
 
         <EditText
             android:id="@+id/whatsapp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="رقم واتساب مقدم الطلب"
+            android:hint="رقم واتساب مقدم الطلب - أرقام إنجليزية"
             android:inputType="phone" />
 
         <EditText
@@ -119,20 +119,27 @@
             android:id="@+id/nationalities"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="الجنسيات - افصل بينها بفاصلة، مثال: ألمانيا، فرنسا"
+            android:hint="الجنسيات - افصل بينها بفاصلة، مثال: صيني"
             android:inputType="text" />
 
         <Button
             android:id="@+id/accessibilityButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="فتح إعدادات إمكانية الوصول" />
+            android:text="1 - تفعيل إمكانية الوصول" />
+
+        <Button
+            android:id="@+id/batteryButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="2 - السماح للتطبيق بالعمل دون تقييد البطارية"
+            android:layout_marginTop="6dp" />
 
         <Button
             android:id="@+id/startButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="بدء التعبئة والإرسال"
+            android:text="3 - بدء التعبئة والإرسال"
             android:layout_marginTop="8dp" />
 
         <Button
@@ -145,8 +152,10 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="ملاحظة: هذه النسخة تعتمد على Accessibility وتتعامل مع عناصر Google Forms الظاهرة. راجع البيانات قبل الضغط على بدء التعبئة."
+            android:text="بعد تفعيل إمكانية الوصول واستثناء البطارية، يمكن للتطبيق الاستمرار في العمل حسب إعدادات النظام. لا يمكن للتطبيق تجاوز حماية Android."
             android:textSize="13sp"
             android:paddingTop="14dp" />
+
     </LinearLayout>
+
 </ScrollView>
